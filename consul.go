@@ -32,7 +32,7 @@ func NewConsulClient(addr string) (*client, error) {
 }
 
 // Register a service with consul local agent - note the tags to define path-prefix is to be used.
-func (c *client) Register(id, name, host string, port int, path, health string) error {
+func (c *client) Register(id, name, host string, port int, health string) error {
 	reg := &consul.AgentServiceRegistration{
 		ID:      id,
 		Name:    name,
@@ -48,7 +48,6 @@ func (c *client) Register(id, name, host string, port int, path, health string) 
 			Timeout:       "1s",
 		},
 		Tags: []string{
-			"traefik.docker.network=web",
 			"traefik.enable=true",
 			"traefik.frontend.rule=Host:localhost;PathPrefixStrip:/" + name,
 			"traefik.frontend.entryPoints=http",
