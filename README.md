@@ -7,7 +7,7 @@ This package registers your go application to consul for service discovery in a 
 Import this package to your project.
 
 ```
-import consulconnector github.com/marvincaspar/go-consul-connector
+import consulconnector "github.com/marvincaspar/go-consul-connector"
 ```
 
 Define the consul endpoint and the service name.
