@@ -42,7 +42,7 @@ go func() {
     os.Exit(0)
   }
 }()
-
+```
 
 ## Example
 
