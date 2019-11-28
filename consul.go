@@ -9,11 +9,11 @@ import (
 // Client provides an interface for getting data out of Consul
 type Client interface {
 	// Get a Service from consul
-	Service(string, string) ([]string, error)
+	Service(serviceName, tag string) ([]string, error)
 	// Register a service with local agent
-	Register(string, int) error
+	Register(id, name, host string, port int, health string) error
 	// Deregister a service with local agent
-	DeRegister(string) error
+	DeRegister(id string) error
 }
 
 type client struct {
