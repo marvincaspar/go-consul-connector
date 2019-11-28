@@ -6,33 +6,23 @@ import (
 	consul "github.com/hashicorp/consul/api"
 )
 
-// Client provides an interface for getting data out of Consul
-type Client interface {
-	// Get a Service from consul
-	Service(serviceName, tag string) ([]string, error)
-	// Register a service with local agent
-	Register(id, name, host string, port int, health string) error
-	// Deregister a service with local agent
-	DeRegister(id string) error
-}
-
-type client struct {
+type Client struct {
 	consul *consul.Client
 }
 
 // NewConsul returns a Client interface for given consul address
-func NewConsulClient(addr string) (*client, error) {
+func NewConsulClient(addr string) (*Client, error) {
 	config := consul.DefaultConfig()
 	config.Address = addr
 	c, err := consul.NewClient(config)
 	if err != nil {
-		return &client{}, err
+		return &Client{}, err
 	}
-	return &client{consul: c}, nil
+	return &Client{consul: c}, nil
 }
 
 // Register a service with consul local agent - note the tags to define path-prefix is to be used.
-func (c *client) Register(id, name, host string, port int, health string) error {
+func (c *Client) Register(id, name, host string, port int, health string) error {
 	reg := &consul.AgentServiceRegistration{
 		ID:      id,
 		Name:    name,
@@ -58,12 +48,12 @@ func (c *client) Register(id, name, host string, port int, health string) error 
 }
 
 // DeRegister a service with consul local agent
-func (c *client) DeRegister(id string) error {
+func (c *Client) DeRegister(id string) error {
 	return c.consul.Agent().ServiceDeregister(id)
 }
 
 // Service return a service
-func (c *client) Service(serviceName, tag string) ([]*consul.ServiceEntry, *consul.QueryMeta, error) {
+func (c *Client) Service(serviceName, tag string) ([]*consul.ServiceEntry, *consul.QueryMeta, error) {
 	passingOnly := true
 	addrs, meta, err := c.consul.Health().Service(serviceName, tag, passingOnly, nil)
 	if len(addrs) == 0 && err == nil {
@@ -75,7 +65,7 @@ func (c *client) Service(serviceName, tag string) ([]*consul.ServiceEntry, *cons
 	return addrs, meta, nil
 }
 
-func (c *client) ServiceAddress(serviceName string) (string, error) {
+func (c *Client) ServiceAddress(serviceName string) (string, error) {
 	srvc, _, err := c.Service(serviceName, "")
 	if err != nil {
 		return "", err
